@@ -1,0 +1,73 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Huawei Commercial Access Point",
+        "description": "Enter the AP management address and an administrator account. State is read over SSH (VRP CLI); SNMP is not required and no Web session is consumed.",
+        "data": {
+          "host": "Host",
+          "username": "Username",
+          "password": "Password",
+          "port": "SSH port",
+          "scan_interval": "Polling interval (seconds)"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigure Huawei AP",
+        "description": "The integration reloads after the connection details change.",
+        "data": {
+          "host": "Host",
+          "username": "Username",
+          "password": "Password",
+          "port": "SSH port",
+          "scan_interval": "Polling interval (seconds)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot reach the device. Check the address, SSH port and network.",
+      "invalid_auth": "Invalid username or password.",
+      "cli_unavailable": "SSH login succeeded but commands were rejected. Make sure the account has administrator rights.",
+      "unknown": "Unexpected error, check the logs."
+    },
+    "abort": {
+      "already_configured": "This device is already configured.",
+      "reconfigure_successful": "Reconfiguration successful."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Huawei AP options",
+        "data": {
+          "scan_interval": "Polling interval (seconds)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "cpu_usage": { "name": "CPU usage" },
+      "cpu_peak": { "name": "CPU peak" },
+      "memory_usage": { "name": "Memory usage" },
+      "memory_used": { "name": "Memory used" },
+      "temperature": { "name": "Temperature" },
+      "temperature_max": { "name": "Max temperature" },
+      "uptime": { "name": "Uptime" },
+      "client_count": { "name": "Associated clients" },
+      "client_count_24g": { "name": "2.4G clients" },
+      "client_count_5g": { "name": "5G clients" },
+      "ap_count": { "name": "Access points online" },
+      "interfaces_up": { "name": "Interfaces up" }
+    },
+    "binary_sensor": {
+      "reachable": { "name": "Reachable" },
+      "power_insufficient": { "name": "Insufficient power" },
+      "temperature_alarm": { "name": "Temperature alarm" },
+      "clients_present": { "name": "Clients present" }
+    },
+    "button": {
+      "restart": { "name": "Restart device" }
+    }
+  }
+}

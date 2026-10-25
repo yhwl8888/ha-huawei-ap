@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+.DS_Store
+.idea/
+.vscode/
+*.log
+
+# Probe output may contain device details
+probe_raw.txt
+raw.txt
+*.dump

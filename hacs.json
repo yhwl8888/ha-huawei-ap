@@ -1,0 +1,9 @@
+{
+  "name": "Huawei Access Point",
+  "content_in_root": false,
+  "filename": "huawei_ap.zip",
+  "render_readme": true,
+  "homeassistant": "2024.6.0",
+  "zip_release": false,
+  "hide_default_branch": false
+}

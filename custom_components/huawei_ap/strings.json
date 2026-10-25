@@ -1,0 +1,73 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "华为商用 AP",
+        "description": "填写 AP 的管理地址与管理员账号。集成通过 SSH 读取 VRP 命令行状态，不需要开启 SNMP，也不占用 Web 会话。",
+        "data": {
+          "host": "主机地址",
+          "username": "用户名",
+          "password": "密码",
+          "port": "SSH 端口",
+          "scan_interval": "轮询间隔（秒）"
+        }
+      },
+      "reconfigure": {
+        "title": "重新配置华为 AP",
+        "description": "修改连接参数后会重新加载集成。",
+        "data": {
+          "host": "主机地址",
+          "username": "用户名",
+          "password": "密码",
+          "port": "SSH 端口",
+          "scan_interval": "轮询间隔（秒）"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "无法连接设备，请检查地址、SSH 端口与网络连通性",
+      "invalid_auth": "用户名或密码错误",
+      "cli_unavailable": "SSH 登录成功，但命令被设备拒绝。请确认该账号具备管理员权限",
+      "unknown": "未知错误，请查看日志"
+    },
+    "abort": {
+      "already_configured": "该设备已配置",
+      "reconfigure_successful": "重新配置成功"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "华为 AP 选项",
+        "data": {
+          "scan_interval": "轮询间隔（秒）"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "cpu_usage": { "name": "CPU 使用率" },
+      "cpu_peak": { "name": "CPU 峰值" },
+      "memory_usage": { "name": "内存使用率" },
+      "memory_used": { "name": "已用内存" },
+      "temperature": { "name": "温度" },
+      "temperature_max": { "name": "最高温度" },
+      "uptime": { "name": "运行时长" },
+      "client_count": { "name": "关联终端数" },
+      "client_count_24g": { "name": "2.4G 终端数" },
+      "client_count_5g": { "name": "5G 终端数" },
+      "ap_count": { "name": "在线 AP 数" },
+      "interfaces_up": { "name": "在线接口数" }
+    },
+    "binary_sensor": {
+      "reachable": { "name": "在线" },
+      "power_insufficient": { "name": "供电不足" },
+      "temperature_alarm": { "name": "温度告警" },
+      "clients_present": { "name": "有终端在线" }
+    },
+    "button": {
+      "restart": { "name": "重启设备" }
+    }
+  }
+}
