@@ -71,6 +71,7 @@ CLI_CANDIDATES: dict[str, tuple[str, ...]] = {
     "radios": ("display radio all", "display wlan radio"),
     "interfaces": ("display interface brief",),
     "ap_stats": ("display ap statistics",),
+    "power": ("display ap power all",),
 }
 
 # Keeps the CLI from paging with "---- More ----".
@@ -123,6 +124,9 @@ class HuaweiApClientData:
 
     # --- alerts ---------------------------------------------------------
     power_insufficient: bool | None = None
+    # Number of APs negotiating a lower PoE class than required (e.g. 802.3af
+    # while the AP needs 802.3at). Sourced from ``display ap power all``.
+    power_limited_count: int | None = None
     temperature_alarm: bool | None = None
 
     # --- wired ----------------------------------------------------------

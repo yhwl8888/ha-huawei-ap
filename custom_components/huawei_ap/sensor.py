@@ -60,6 +60,7 @@ def _ap_attributes(data: HuaweiApClientData) -> dict[str, Any]:
                 "is_leader": ap.get("is_leader"),
                 "state": ap.get("state"),
                 "uptime_seconds": ap.get("uptime_seconds"),
+                "power_mode": ap.get("power_mode"),
             }
             for ap in (data.aps or [])
         ]
@@ -95,6 +96,33 @@ def _interface_attributes(data: HuaweiApClientData) -> dict[str, Any]:
                 "out_utilization": i.get("out_utilization"),
             }
             for i in interfaces
+        ],
+    }
+
+
+def _leader_power_mode(data: HuaweiApClientData) -> str | None:
+    """PoE class negotiated by the leader AP, e.g. ``AF(Limited)``."""
+    aps = data.aps or []
+    for ap in aps:
+        if ap.get("is_leader"):
+            return ap.get("power_mode")
+    if aps:
+        return aps[0].get("power_mode")
+    return None
+
+
+def _power_attributes(data: HuaweiApClientData) -> dict[str, Any]:
+    return {
+        "limited_count": data.power_limited_count,
+        "access_points": [
+            {
+                "id": ap.get("id"),
+                "name": ap.get("name"),
+                "model": ap.get("model"),
+                "power_mode": ap.get("power_mode"),
+                "decided_by": ap.get("power_decided_by"),
+            }
+            for ap in (data.aps or [])
         ],
     }
 
@@ -194,6 +222,13 @@ SENSORS: tuple[HuaweiApSensorDescription, ...] = (
         icon="mdi:access-point-network",
         value_fn=lambda data: data.ap_count,
         attributes_fn=_ap_attributes,
+    ),
+    HuaweiApSensorDescription(
+        key="power_mode",
+        translation_key="power_mode",
+        icon="mdi:flash",
+        value_fn=_leader_power_mode,
+        attributes_fn=_power_attributes,
     ),
     HuaweiApSensorDescription(
         key="interfaces_up",

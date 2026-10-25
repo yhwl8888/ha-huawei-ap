@@ -344,6 +344,49 @@ def parse_aps(text: str) -> tuple[int | None, list[dict], bool]:
 
 
 # ---------------------------------------------------------------------------
+# display ap power all
+# ---------------------------------------------------------------------------
+_POWER_ROW_RE = re.compile(
+    r"^(?P<id>\d+)\s+"
+    r"(?P<mac>[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4})\s+"
+    r"(?P<name>\S+)\s+"
+    r"(?P<group>\S+)\s+"
+    r"(?P<mode>\S+)\s+"
+    r"(?P<decided>.+)$"
+)
+
+
+def parse_power(text: str) -> dict[int, dict]:
+    """Parse ``display ap power all`` into ``{ap_id: {...}}``.
+
+    Row layout: ID  MAC  Name  Group  Power-workmode  Decided by
+    ``Power-workmode`` reports the PoE class the PD chip actually negotiated,
+    e.g. ``AF(Limited)`` when the AP wants 802.3at but only got 802.3af.
+    """
+    result: dict[int, dict] = {}
+    if not text:
+        return result
+
+    for line in text.splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("-") or stripped.startswith("Total:"):
+            continue
+        match = _POWER_ROW_RE.match(stripped)
+        if not match:
+            continue
+        row = match.groupdict()
+        mode = row["mode"]
+        result[int(row["id"])] = {
+            "mac": format_mac(row["mac"]),
+            "name": row["name"],
+            "power_mode": mode,
+            "power_decided_by": row["decided"].strip(),
+            "power_limited": "limited" in mode.lower(),
+        }
+    return result
+
+
+# ---------------------------------------------------------------------------
 # display radio all
 # ---------------------------------------------------------------------------
 _RADIO_RE = re.compile(
@@ -495,6 +538,24 @@ def build_snapshot(
         data.ap_count = count
         data.aps = aps
         data.power_insufficient = power_issue
+
+        # Enrich each AP with the negotiated PoE class, when available.
+        if outputs.get("power"):
+            power_map = parse_power(outputs["power"])
+            limited = 0
+            for ap in aps:
+                info = power_map.get(ap["id"])
+                if not info:
+                    continue
+                ap["power_mode"] = info["power_mode"]
+                ap["power_decided_by"] = info["power_decided_by"]
+                if info["power_limited"]:
+                    limited += 1
+                    ap["power_insufficient"] = True
+            data.power_limited_count = limited
+            if limited:
+                data.power_insufficient = True
+
         for ap in aps:
             if ap.get("is_leader"):
                 data.mac = ap.get("mac")

@@ -69,8 +69,9 @@
 | AP 拓扑 / 供电状态 | `display ap all` |
 | 射频 / 信道 | `display radio all` |
 | 接口 | `display interface brief` |
+| 供电模式（PoE 档位） | `display ap power all` |
 
-`display station assoc-info`、`display device`、`display power` 在该固件上**不存在**，不要用。
+`display station assoc-info`、`display device`、`display power`、`display poe` 在该固件上**不存在**，不要用。供电要看 `display ap power all`，不是 `display power`。
 
 ### 3.4 解析器
 
@@ -143,6 +144,7 @@ aaa
 | `sensor.*_client_count_24g` | — | 否 | 2.4G 终端数，属性含射频明细 |
 | `sensor.*_client_count_5g` | — | 否 | 5G 终端数 |
 | `sensor.*_ap_count` | — | 是 | 在线 AP 数，属性含 AP 拓扑 |
+| `sensor.*_power_mode` | — | 是 | 供电模式（如 `AF(Limited)` / `AT`），属性含每台 AP 的档次与判定来源 |
 | `sensor.*_interfaces_up` | — | 否 | 在线接口数，属性含各接口利用率 |
 
 ### 二进制传感器
@@ -159,6 +161,22 @@ aaa
 每个关联终端自动创建一个 `device_tracker`，属性包含 **IP、SSID、所属 AP、频段、协议、RSSI、收发速率、VLAN**。
 
 终端下线后实体转为 `not_home` 而不是消失，历史记录得以保留。
+
+### 关于供电（PoE）
+
+`display ap power all` 会报出每台 AP 实际协商到的 PoE 档位：
+
+| 档位 | 含义 |
+|---|---|
+| `AT` / `AT(Full)` | 802.3at（PoE+，25.5W），满血运行 |
+| `AF(Limited)` | 只有 802.3af（15.4W），**功能受限** |
+| `DC` | 本地电源适配器供电 |
+
+出现 `AF(Limited)` 说明上游 PoE 设备供不出 802.3at。此时 AP 会主动限制发射功率、MIMO 流数，并可能关闭 USB / 蓝牙 / 物联网扩展——能连上，但跑不满。
+
+注意 `Decided by: Hardware detect` 表示这是 PD 芯片的硬件检测结果，**在 AP 上改配置无效**。要解决只能换 802.3at 交换机/注入器，或改用 DC 适配器。
+
+集成把这一状态暴露为 `binary_sensor.*_power_insufficient` 和 `sensor.*_power_mode`，两者属性里都有每台 AP 的明细。
 
 ### 按钮
 

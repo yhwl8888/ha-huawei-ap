@@ -58,6 +58,7 @@
       "client_count_24g": { "name": "2.4G clients" },
       "client_count_5g": { "name": "5G clients" },
       "ap_count": { "name": "Access points online" },
+      "power_mode": { "name": "Power mode" },
       "interfaces_up": { "name": "Interfaces up" }
     },
     "binary_sensor": {

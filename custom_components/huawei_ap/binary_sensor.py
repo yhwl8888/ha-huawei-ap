@@ -86,3 +86,24 @@ class HuaweiApBinarySensor(HuaweiApEntity, BinarySensorEntity):
                 return None
             return data.client_count > 0
         return None
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any] | None:
+        """Expose the per-AP PoE class on the power sensor."""
+        if self.entity_description.key != "power_insufficient":
+            return None
+        data = self.coordinator.data
+        if data is None:
+            return None
+        return {
+            "limited_count": data.power_limited_count,
+            "access_points": [
+                {
+                    "name": ap.get("name"),
+                    "model": ap.get("model"),
+                    "power_mode": ap.get("power_mode"),
+                    "decided_by": ap.get("power_decided_by"),
+                }
+                for ap in (data.aps or [])
+            ],
+        }

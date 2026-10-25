@@ -58,6 +58,7 @@
       "client_count_24g": { "name": "2.4G 终端数" },
       "client_count_5g": { "name": "5G 终端数" },
       "ap_count": { "name": "在线 AP 数" },
+      "power_mode": { "name": "供电模式" },
       "interfaces_up": { "name": "在线接口数" }
     },
     "binary_sensor": {
